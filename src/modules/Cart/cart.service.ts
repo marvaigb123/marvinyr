@@ -54,3 +54,46 @@ export const getItemInCart = async (
   const docs = (await Cart.find({ userId: id })) as any;
   return docs;
 };
+
+
+/**
+ * Query for courses
+ * @param {Object} filter - Mongo filter
+ * @param {Object} options - Query options
+ * @returns {Promise<QueryResult>}
+ */
+export const queryDocs = async (
+  filter: Record<string, any>,
+  options: IOptions
+): Promise<QueryResult> => {
+  const docs = await Cart.paginate(filter, options);
+  return docs;
+};
+
+/**
+ * Soft Delete Cart by id
+ * @param {mongoose.Types.ObjectId} userId
+ * @returns {Promise<ICourseDoc | null>}
+ */
+export const SoftDeleteById = async (
+  Id: mongoose.Types.ObjectId
+): Promise<ICartDoc | null> => {
+  const cart = await getCartById(Id);
+
+  if (!cart) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Cart not found");
+  }
+
+  const updatedCourse = await Cart.findByIdAndUpdate(
+    Id,
+    {
+      isSoftDeleted: true,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  return updatedCourse;
+};

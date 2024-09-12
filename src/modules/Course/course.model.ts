@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Query } from "mongoose";
 
 import toJSON from "../toJSON/toJSON";
 import paginate from "../paginate/paginate";
@@ -22,17 +22,26 @@ const courseSchema = new mongoose.Schema<ICourseDoc, ICourseModel>(
       type: String
     },
     image: String,
-
     creatorId: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: [true, "creator id is required"],
     },
+    isSoftDeleted: {
+      type: Boolean,
+      default: false
+    }
   },
   {
     timestamps: true,
   }
 );
+
+courseSchema.pre(/^find/, function (this: Query<any, any>, next) {
+  const query = this.getQuery();
+  query.isSoftDeleted = { $ne: true };
+  next();
+});
 
 courseSchema.pre<ICourseDoc>(/^find/, function (next) {
   this.populate({

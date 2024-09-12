@@ -4,7 +4,6 @@ const Joi = require("joi");
 
 const newCourseBody: Record<keyof NewCourse, any> = {
   title: Joi.string().required(),
-  creatorId: Joi.string().required(),
   description: Joi.string().required(),
   category: Joi.string(),
   image: Joi.alternatives()

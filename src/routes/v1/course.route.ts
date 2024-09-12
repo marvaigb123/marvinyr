@@ -24,7 +24,8 @@ router
     auth.checkRoles("UPDATE_COURSE"),
     courseController.updateCourse
   )
-  .get(courseController.getCourseById);
+  .get(courseController.getCourseById)
+  .delete(courseController.SoftDeleteCourseById);
 
 router.route("/search/:id").get(courseController.searchCourse);
 

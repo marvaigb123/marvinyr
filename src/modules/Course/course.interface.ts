@@ -8,6 +8,7 @@ export interface ICourse {
   description: string;
   availableLocation: string; /// authors can just to restrict their content based on locations
   image?: Blob | string;
+  isSoftDeleted: boolean;
 }
 
 export type UpdateCourseBody = Partial<ICourse>;
@@ -19,7 +20,7 @@ type MakeRequiredExcept<T, K extends keyof T> = {
 
 export type NewCourseExcept = MakeRequiredExcept<ICourse, "image" | "category">;
 
-export type NewCourse = Omit<NewCourseExcept, "availableLocation">;
+export type NewCourse = Omit<NewCourseExcept, "availableLocation" | "creatorId" | "isSoftDeleted">;
 
 export interface ICourseDoc extends ICourse, Document {
   _id: string;
