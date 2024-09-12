@@ -1,6 +1,7 @@
 import express, { Router } from "express";
 import docsRoute from "./swagger.route";
 import authRoute from "./auth.route";
+import courseRoute from "./course.route";
 
 // import config from "../../config";
 
@@ -20,6 +21,10 @@ const defaultIRoute: IRoute[] = [
   {
     path: "/auth",
     route: authRoute,
+  },
+  {
+    path: "/course",
+    route: courseRoute,
   },
 ];
 

@@ -89,6 +89,7 @@
     "http-status": "^1.6.2",
     "joi": "^17.7.0",
     "jsonwebtoken": "^9.0.0",
+    "marvinyr-api": "file:",
     "moment": "^2.29.4",
     "mongoose": "^7.2.2",
     "morgan": "^1.10.0",

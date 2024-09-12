@@ -45,5 +45,5 @@ courseSchema.pre<ICourseDoc>(/^find/, function (next) {
 courseSchema.plugin(toJSON);
 courseSchema.plugin(paginate as any);
 
-const Tool = mongoose.model<ICourseDoc, ICourseModel>("Course", courseSchema);
-export default Tool;
+const Course = mongoose.model<ICourseDoc, ICourseModel>("Course", courseSchema);
+export default Course;
