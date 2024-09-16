@@ -24,7 +24,7 @@ export const sendOtpEmail = (
   sendSMTPEmail.subject = "welcome! we want to confirm your account";
   sendSMTPEmail.htmlContent = html;
   sendSMTPEmail.sender = {
-    name: "mavryn",
+    name: "Earnify",
     email: "ikezuby2012@gmail.com",
   };
   sendSMTPEmail.to = [
