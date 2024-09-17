@@ -3,6 +3,7 @@ import docsRoute from "./swagger.route";
 import authRoute from "./auth.route";
 import courseRoute from "./course.route";
 import CartRoute from "./cart.route";
+import ReferralRoute from "./referrallink.route";
 
 // import config from "../../config";
 
@@ -31,6 +32,10 @@ const defaultIRoute: IRoute[] = [
     path: "/cart",
     route: CartRoute,
   },
+  {
+    path: "/referral",
+    route: ReferralRoute,
+  },
 ];
 
 const devIRoute: IRoute[] = [
@@ -45,7 +50,7 @@ defaultIRoute.forEach((route) => {
   router.use(route.path, route.route);
 });
 
-/* istanbul ignore next */
+/* ignore next */
 if ((process.env.NODE_ENV as string) === "development") {
   devIRoute.forEach((route) => {
     router.use(route.path, route.route);

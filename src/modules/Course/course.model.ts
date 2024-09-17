@@ -19,7 +19,7 @@ const courseSchema = new mongoose.Schema<ICourseDoc, ICourseModel>(
       required: [true, "description is required"],
     },
     availableLocation: {
-      type: String
+      type: String,
     },
     image: String,
     creatorId: {
@@ -27,10 +27,23 @@ const courseSchema = new mongoose.Schema<ICourseDoc, ICourseModel>(
       ref: "User",
       required: [true, "creator id is required"],
     },
+    rating: {
+      type: Number,
+      default: 4.5,
+      min: [1, "Rating must be above 1.0"],
+      max: [5, "Rating must be below 5.0"],
+      set: (val) => Math.round(val * 10) / 10, // 4.666666, 46.6666, 47, 4.7
+    },
+    time: { type: String },
+    price: {
+      type: Number,
+      required: [true, "A course must have a price"],
+    },
     isSoftDeleted: {
       type: Boolean,
-      default: false
-    }
+      select: false,
+      default: false,
+    },
   },
   {
     timestamps: true,

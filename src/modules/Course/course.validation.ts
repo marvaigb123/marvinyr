@@ -9,6 +9,9 @@ const newCourseBody: Record<keyof NewCourse, any> = {
   image: Joi.alternatives()
     .try(Joi.string(), Joi.binary().encoding("base64"))
     .optional(),
+  rating: Joi.number().required(),
+  time: Joi.string().optional(),
+  price: Joi.number().required(),
 };
 
 export const createNewCourse = {

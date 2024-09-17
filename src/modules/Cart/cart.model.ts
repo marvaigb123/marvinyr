@@ -21,6 +21,7 @@ const cartSchema = new mongoose.Schema<ICartDoc, ICartModel>(
     },
     isSoftDeleted: {
       type: Boolean,
+      select: false,
       default: false,
     },
   },

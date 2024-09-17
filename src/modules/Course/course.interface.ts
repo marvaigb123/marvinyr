@@ -5,6 +5,9 @@ export interface ICourse {
   creatorId: string | Types.ObjectId;
   category: string;
   title: string;
+  time?: string;
+  rating: number;
+  price: number;
   description: string;
   availableLocation: string; /// authors can just to restrict their content based on locations
   image?: Blob | string;
@@ -18,7 +21,7 @@ type MakeRequiredExcept<T, K extends keyof T> = {
   [P in keyof T as P extends K ? P : Required<P>]: T[P];
 };
 
-export type NewCourseExcept = MakeRequiredExcept<ICourse, "image" | "category">;
+export type NewCourseExcept = MakeRequiredExcept<ICourse, "image" | "category" | "time" | "price" | "rating">;
 
 export type NewCourse = Omit<NewCourseExcept, "availableLocation" | "creatorId" | "isSoftDeleted">;
 
