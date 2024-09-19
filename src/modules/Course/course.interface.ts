@@ -5,25 +5,20 @@ export interface ICourse {
   creatorId: string | Types.ObjectId;
   category: string;
   title: string;
-  time?: string;
-  rating: number;
-  price: number;
   description: string;
   availableLocation: string; /// authors can just to restrict their content based on locations
   image?: Blob | string;
-  isSoftDeleted: boolean;
 }
 
 export type UpdateCourseBody = Partial<ICourse>;
-
 
 type MakeRequiredExcept<T, K extends keyof T> = {
   [P in keyof T as P extends K ? P : Required<P>]: T[P];
 };
 
-export type NewCourseExcept = MakeRequiredExcept<ICourse, "image" | "category" | "time" | "price" | "rating">;
+export type NewCourseExcept = MakeRequiredExcept<ICourse, "image" | "category">;
 
-export type NewCourse = Omit<NewCourseExcept, "availableLocation" | "creatorId" | "isSoftDeleted">;
+export type NewCourse = Omit<NewCourseExcept, "availableLocation">;
 
 export interface ICourseDoc extends ICourse, Document {
   _id: string;
