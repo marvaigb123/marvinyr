@@ -1,15 +1,17 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import mongoose from "mongoose";
-import { catchAsync } from "../utils";
+import { catchAsync, pick } from "../utils";
 import Cart from "./cart.model";
 import * as cartService from "./cart.service";
+import { IOptions } from "../paginate/paginate";
+import { ApiError } from "../errors";
 
 export const AddToCart = catchAsync(
   async (req: Request | any, res: Response) => {
     const newCart = await Cart.create({
       userId: req.user.id,
-      course: req.body.tool,
+      course: req.body.course,
       quantity: req.body.quantity,
     });
 
@@ -17,6 +19,37 @@ export const AddToCart = catchAsync(
       status: "success",
       data: newCart,
     });
+  }
+);
+
+export const getAllItemsInCart = catchAsync(async (req: Request, res: Response) => {
+  const options: IOptions = pick(req.query, [
+    "sortBy",
+    "limit",
+    "page",
+    "projectBy",
+  ]);
+  const result = await cartService.queryDocs({}, options);
+
+  res.status(httpStatus.OK).json({
+    status: "success",
+    data: result,
+  });
+});
+
+export const SoftDeleteCartById = catchAsync(
+  async (req: Request | any, res: Response, next: NextFunction) => {
+    if (typeof req.params.id === "string") {
+      await cartService.SoftDeleteById(
+        new mongoose.Types.ObjectId(req.params.id)
+      );
+
+      res.status(httpStatus.NO_CONTENT).json({
+        status: "success",
+      });
+    } else {
+      return next(new ApiError(httpStatus.NOT_FOUND, "id is required"));
+    }
   }
 );
 

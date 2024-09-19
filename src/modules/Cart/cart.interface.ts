@@ -5,6 +5,7 @@ export interface ICart {
   userId: string | Types.ObjectId;
   course: Types.ObjectId | string;
   quantity: number;
+  isSoftDeleted: boolean;
 }
 
 export type UpdateCartBody = Partial<ICart>;

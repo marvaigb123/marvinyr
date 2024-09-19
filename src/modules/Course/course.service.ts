@@ -29,12 +29,8 @@ export const updateCourseById = async (
 ): Promise<ICourseDoc | null> => {
   const course = await getCourseById(Id);
 
-  const {
-    category,
-    title,
-    description,
-    availableLocation,
-  } = updateCourse as any;
+  const { category, title, description, availableLocation } =
+    updateCourse as any;
 
   if (!course) {
     throw new ApiError(httpStatus.NOT_FOUND, "Course not found");
@@ -48,6 +44,34 @@ export const updateCourseById = async (
       description,
       availableLocation,
       image,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  return updatedCourse;
+};
+
+/**
+ * Soft Delete Course by id
+ * @param {mongoose.Types.ObjectId} userId
+ * @returns {Promise<ICourseDoc | null>}
+ */
+export const SoftDeleteById = async (
+  Id: mongoose.Types.ObjectId
+): Promise<ICourseDoc | null> => {
+  const course = await getCourseById(Id);
+
+  if (!course) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Course not found");
+  }
+
+  const updatedCourse = await Course.findByIdAndUpdate(
+    Id,
+    {
+      isSoftDeleted: true,
     },
     {
       new: true,

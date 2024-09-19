@@ -11,13 +11,18 @@ const cartSchema = new mongoose.Schema<ICartDoc, ICartModel>(
       ref: "User",
       required: [true, "creator id is required"],
     },
-    tool: {
+    course: {
       type: Schema.Types.ObjectId,
-      ref: "Tool",
+      ref: "Course",
       required: [true, "creator id is required"],
     },
     quantity: {
       type: Number,
+    },
+    isSoftDeleted: {
+      type: Boolean,
+      select: false,
+      default: false,
     },
   },
   {
@@ -27,7 +32,7 @@ const cartSchema = new mongoose.Schema<ICartDoc, ICartModel>(
 
 cartSchema.pre<ICartDoc>(/^find/, function (next) {
   this.populate({
-    path: "userId tool",
+    path: "userId course",
   });
   next();
 });

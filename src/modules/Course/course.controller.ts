@@ -67,49 +67,67 @@ export const updateCourse = catchAsync(
   }
 );
 
-export const getCourseById = catchAsync(async (req: Request, res: Response) => {
+export const SoftDeleteCourseById = catchAsync(
+  async (req: Request | any, res: Response, next: NextFunction) => {
     if (typeof req.params.id === "string") {
-      const course = await courseService.getCourseById(
+      await courseService.SoftDeleteById(
         new mongoose.Types.ObjectId(req.params.id)
       );
-  
-      res.status(httpStatus.OK).json({
+
+      res.status(httpStatus.NO_CONTENT).json({
         status: "success",
-        data: course,
       });
+    } else {
+      return next(new ApiError(httpStatus.NOT_FOUND, "id is required"));
     }
-  });
-  
-  export const getUsersCourse = catchAsync(
-    async (req: Request | any, res: Response) => {
-      const userCourse = (await courseService.getCourseCreatedId(req.user.id)) as any;
-  
-      res.status(httpStatus.OK).json({
-        status: "success",
-        length: userCourse?.length,
-        data: userCourse,
-      });
+  }
+);
+
+export const getCourseById = catchAsync(async (req: Request, res: Response) => {
+  if (typeof req.params.id === "string") {
+    const course = await courseService.getCourseById(
+      new mongoose.Types.ObjectId(req.params.id)
+    );
+
+    res.status(httpStatus.OK).json({
+      status: "success",
+      data: course,
+    });
+  }
+});
+
+export const getUsersCourse = catchAsync(
+  async (req: Request | any, res: Response) => {
+    const userCourse = (await courseService.getCourseCreatedId(
+      req.user.id
+    )) as any;
+
+    res.status(httpStatus.OK).json({
+      status: "success",
+      length: userCourse?.length,
+      data: userCourse,
+    });
+  }
+);
+
+export const searchCourse = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { search } = pick(req.query, ["search"]);
+    const { id } = req.params;
+
+    const types = ["title"];
+
+    if (!types.includes(search)) {
+      return next(
+        new ApiError(httpStatus.NOT_ACCEPTABLE, "query type is not allowed")
+      );
     }
-  );
-  
-  export const searchCourse = catchAsync(
-    async (req: Request, res: Response, next: NextFunction) => {
-      const { search } = pick(req.query, ["search"]);
-      const { id } = req.params;
-  
-      const types = ["title"];
-  
-      if (!types.includes(search)) {
-        return next(
-          new ApiError(httpStatus.NOT_ACCEPTABLE, "query type is not allowed")
-        );
-      }
-  
-      const data = await Course.find({ title: id });
-  
-      res.status(httpStatus.OK).json({
-        status: "success",
-        data,
-      });
-    }
-  );
+
+    const data = await Course.find({ title: id });
+
+    res.status(httpStatus.OK).json({
+      status: "success",
+      data,
+    });
+  }
+);
