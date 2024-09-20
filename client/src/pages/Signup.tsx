@@ -1,125 +1,175 @@
-import React, { useState } from "react";
-import { registerUser } from "../apiService";
-import axios from "axios";
+import React, { useState, ChangeEvent, FormEvent } from "react";
+import axios, { AxiosError } from "axios";
 
-interface UserData {
+// Define the type for form data
+interface FormData {
+  name: string;
   email: string;
   password: string;
   passwordConfirm: string;
-  name: string;
   phoneNumber: string;
+  accessRole: string;
 }
 
-const Signup: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirm, setPasswordConfirm] = useState("");
-  const [name, setName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+const Register = () => {
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    email: "",
+    password: "",
+    passwordConfirm: "",
+    phoneNumber: "",
+    accessRole: "user", // Default role is "user"
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
+
+  // Handle input change
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-
-    const userData: UserData = {
-      email,
-      password,
-      passwordConfirm,
-      name,
-      phoneNumber,
-    };
-
     try {
-      const response = await registerUser(userData); // Ensure userData is passed correctly
-      if (response.status === 201) {
-        setSuccess("Signup successful!"); // Handle successful registration
-        // Redirect or show success message
-      }
-    } catch (error) {
+      // Send form data to the server
+      const response = await axios.post(
+        "http://localhost:5000/api/register",
+        formData
+      );
+      setSuccessMessage(
+        "Registration successful! Check your email for the OTP."
+      );
+      setErrorMessage(""); // Clear error message on success
+    } catch (error: unknown) {
+      // Handle different error types
       if (axios.isAxiosError(error)) {
-        if (error?.response?.data && error.response?.data?.message.length > 1) {
-          setError(error?.response?.data.message);
-        }
-        // Handle error
+        // Axios-specific error handling
+        setErrorMessage(
+          error.response?.data?.message || "Something went wrong."
+        );
       } else {
-        setError("An unexpected error occurred. Please try again.");
+        // Generic error handling
+        setErrorMessage("An unexpected error occurred.");
       }
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md p-8 bg-white shadow-lg rounded-lg">
-        <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
-        {error && <div className="mb-4 text-red-600">{error}</div>}
-        {success && <div className="mb-4 text-green-600">{success}</div>}
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-blue-500 to-purple-600">
+      <div className="bg-white shadow-lg rounded-lg p-8 max-w-lg w-full">
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
+          Create an Account
+        </h2>
+
+        {errorMessage && (
+          <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
+            {errorMessage}
+          </div>
+        )}
+        {successMessage && (
+          <div className="bg-green-100 text-green-700 p-3 rounded mb-4">
+            {successMessage}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Name
-            </label>
+            <label className="block text-gray-700 font-medium mb-2">Name</label>
             <input
               type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
               required
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
+
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-gray-700 font-medium mb-2">
               Email
             </label>
             <input
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
               required
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
+
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Phone Number
-            </label>
-            <input
-              type="text"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-gray-700 font-medium mb-2">
               Password
             </label>
             <input
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
               required
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
+
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-gray-700 font-medium mb-2">
               Confirm Password
             </label>
             <input
               type="password"
-              value={passwordConfirm}
-              onChange={(e) => setPasswordConfirm(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              name="passwordConfirm"
+              value={formData.passwordConfirm}
+              onChange={handleChange}
               required
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 font-medium mb-2">
+              Phone Number
+            </label>
+            <input
+              type="text"
+              name="phoneNumber"
+              value={formData.phoneNumber}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div className="mb-6">
+            <label className="block text-gray-700 font-medium mb-2">
+              Access Role
+            </label>
+            <select
+              name="accessRole"
+              value={formData.accessRole}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="user">User</option>
+              <option value="author">Author</option>
+              <option value="affiliate">Affiliate</option>
+            </select>
+          </div>
+
           <button
             type="submit"
-            className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600 transition-colors"
           >
-            Sign Up
+            Submit
           </button>
         </form>
       </div>
@@ -127,4 +177,4 @@ const Signup: React.FC = () => {
   );
 };
 
-export default Signup;
+export default Register;
