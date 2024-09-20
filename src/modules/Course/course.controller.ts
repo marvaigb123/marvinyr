@@ -12,12 +12,23 @@ import { IOptions } from "../paginate/paginate";
 
 export const createNewCourse = catchAsync(
   async (req: Request | any, res: Response) => {
-    const { category, title, description, availableLocation } = req.body;
+    const {
+      category,
+      title,
+      description,
+      availableLocation,
+      price,
+      time,
+      rating,
+    } = req.body;
 
     const course = {
       category,
       title,
+      price,
       description,
+      time,
+      rating,
       availableLocation,
       creatorId: req.user.id,
       image: req.file ? req.file.path : (req.body.image ?? ""),
