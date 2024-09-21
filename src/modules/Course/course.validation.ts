@@ -12,6 +12,8 @@ const newCourseBody: Record<keyof NewCourse, any> = {
   rating: Joi.number().required(),
   time: Joi.string().optional(),
   price: Joi.number().required(),
+  creatorId: Joi.number().required(),
+  isSoftDeleted: Joi.number().required(),
 };
 
 export const createNewCourse = {
