@@ -6,8 +6,12 @@ export interface ICourse {
   category: string;
   title: string;
   description: string;
-  availableLocation: string; /// authors can just to restrict their content based on locations
-  image?: Blob | string;
+  image?: string;
+  price?: number;
+  time?: string;
+  rating?: number;
+  isSoftDeleted?: boolean;
+  availableLocation: string;
 }
 
 export type UpdateCourseBody = Partial<ICourse>;
